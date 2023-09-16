@@ -8,13 +8,32 @@
     <CBuildPath>$(MSBuildProjectDirectory)\..\build</CBuildPath>
   </PropertyGroup>
 
-  <Target Name="CBuildScript" BeforeTargets="Build">
+  <Target Name="CBuildScript" BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(CBuildPath)" />
     <Exec Command="cd $(CBuildPath); cmake ..; make" />
-
-    <Copy SourceFiles="$(CBuildPath)\libtinyfiledialogs.so" DestinationFolder="$(OutputPath)" Condition="$([MSBuild]::IsOsPlatform(Linux))" />
-    <Copy SourceFiles="$(CBuildPath)\tinyfiledialogs.dll" DestinationFolder="$(OutputPath)" Condition="$([MSBuild]::IsOsPlatform(Windows))" />
-    <Copy SourceFiles="$(CBuildPath)\libtinyfiledialogs.dylib" DestinationFolder="$(OutputPath)" Condition="$([MSBuild]::IsOsPlatform(OSX))" />
   </Target>
+
+ <ItemGroup>
+    <Content 
+      Include="$(CBuildPath)\libtinyfiledialogs.so"
+      Condition="$([MSBuild]::IsOsPlatform(Linux))"
+      BeforeTargets="Build"
+      CopyToOutputDirectory="Always"
+    />
+
+    <Content
+      Include="$(CBuildPath)\tinyfiledialogs.dll"
+      Condition="$([MSBuild]::IsOsPlatform(Windows))"
+      BeforeTargets="Build"
+      CopyToOutputDirectory="Always"
+    />
+
+    <Content
+      Include="$(CBuildPath)\libtinyfiledialogs.dylib"
+      Condition="$([MSBuild]::IsOsPlatform(OSX))"
+      BeforeTargets="Build"
+      CopyToOutputDirectory="Always"
+    />
+ </ItemGroup>
 
 </Project>
