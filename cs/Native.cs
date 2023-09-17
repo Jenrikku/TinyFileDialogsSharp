@@ -2,13 +2,13 @@ using System.Runtime.InteropServices;
 
 namespace TinyFileDialogsSharp;
 
-internal static unsafe partial class Native
+internal static partial class Native
 {
     const string lib = "tinyfiledialogs";
 
     /* aCharVariableName: "tinyfd_version" "tinyfd_needs" "tinyfd_response"
        aIntVariableName : "tinyfd_verbose" "tinyfd_silent" "tinyfd_allowCursesDialogs"
-                        "tinyfd_forceConsole" "tinyfd_assumeGraphicDisplay" "tinyfd_winUtf8"
+                          "tinyfd_forceConsole" "tinyfd_assumeGraphicDisplay" "tinyfd_winUtf8"
     */
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
@@ -40,14 +40,14 @@ internal static unsafe partial class Native
     ); // returns 0 for cancel/no, 1 for ok/yes, 2 for no in yesnocancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial string? tinyfd_inputBox(
+    public static partial nint tinyfd_inputBox(
         string? aTitle, // NULL or ""
         string? aMessage, // NULL or "" (\n and \t have no effect)
         string? aDefaultInput // NULL = passwordBox, "" = inputbox
     ); // returns NULL on cancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial string? tinyfd_saveFileDialog(
+    public static partial nint tinyfd_saveFileDialog(
         string? aTitle, // NULL or ""
         string? aDefaultPathAndFile, // NULL or ""
         int aNumOfFilterPatterns, // 0  (1 in the following example)
@@ -56,7 +56,7 @@ internal static unsafe partial class Native
     ); // returns NULL on cancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial string? tinyfd_openFileDialog(
+    public static partial nint tinyfd_openFileDialog(
         string? aTitle, // NULL or ""
         string? aDefaultPathAndFile, // NULL or ""
         int aNumOfFilterPatterns, // 0 (2 in the following example)
@@ -66,13 +66,13 @@ internal static unsafe partial class Native
     ); // returns NULL on cancel, in case of multiple files, the separator is |
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial string? tinyfd_selectFolderDialog(
+    public static partial nint tinyfd_selectFolderDialog(
         string? aTitle, // NULL or ""
         string? aDefaultPath // NULL or ""
     ); // returns NULL on cancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf8)]
-    public static partial string? tinyfd_colorChooser(
+    public static partial nint tinyfd_colorChooser(
         string? aTitle, // NULL or ""
         string? aDefaultHexRGB, // NULL or "" or "#FF0000"
         byte[]? aDefaultRGB, // unsigned char lDefaultRGB[3] = { 0 , 128 , 255 };
@@ -103,14 +103,14 @@ internal static unsafe partial class Native
     ); // returns 0 for cancel/no, 1 for ok/yes, 2 for no in yesnocancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf16)]
-    public static partial string? tinyfd_inputBoxW(
+    public static partial nint tinyfd_inputBoxW(
         string? aTitle, // NULL or L""
         string? aMessage, // NULL or L"" (\n nor \t not respected)
         string? aDefaultInput // NULL passwordBox, L"" inputbox
     );
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf16)]
-    public static partial string? tinyfd_saveFileDialogW(
+    public static partial nint tinyfd_saveFileDialogW(
         string? aTitle, // NULL or L""
         string? aDefaultPathAndFile, // NULL or L""
         int aNumOfFilterPatterns, // 0 (1 in the following example)
@@ -119,7 +119,7 @@ internal static unsafe partial class Native
     ); // returns NULL on cancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf16)]
-    public static partial string? tinyfd_openFileDialogW(
+    public static partial nint tinyfd_openFileDialogW(
         string? aTitle, // NULL or L""
         string? aDefaultPathAndFile, // NULL or L""
         int aNumOfFilterPatterns, // 0 (2 in the following example)
@@ -129,13 +129,13 @@ internal static unsafe partial class Native
     ); // returns NULL on cancel, in case of multiple files, the separator is |
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf16)]
-    public static partial string? tinyfd_selectFolderDialogW(
+    public static partial nint tinyfd_selectFolderDialogW(
         string? aTitle, // NULL or L""
         string? aDefaultPath // NULL or L""
     ); // returns NULL on cancel
 
     [LibraryImport(lib, StringMarshalling = StringMarshalling.Utf16)]
-    public static partial string? tinyfd_colorChooserW(
+    public static partial nint tinyfd_colorChooserW(
         string? aTitle, // NULL or L""
         string? aDefaultHexRGB, // NULL or L"#FF0000"
         byte[]? aDefaultRGB, // unsigned char lDefaultRGB[3] = { 0 , 128 , 255 };

@@ -1,5 +1,6 @@
 ﻿using static TinyFileDialogsSharp.Native;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace TinyFileDialogsSharp;
 
@@ -30,7 +31,7 @@ public static class TinyFileDialogs
     /// </summary>
     public static void Beep() => tinyfd_beep();
 
-    public static unsafe void NotifyPopup(
+    public static void NotifyPopup(
         string? title = null,
         string? message = null,
         NotifyIconType iconType = NotifyIconType.Info
@@ -49,7 +50,7 @@ public static class TinyFileDialogs
             tinyfd_notifyPopup(title, message, iconTypeStr);
     }
 
-    public static unsafe MessageBoxButton MessageBox(
+    public static MessageBoxButton MessageBox(
         string? title = null,
         string? message = null,
         DialogType dialogType = DialogType.Ok,
@@ -95,7 +96,7 @@ public static class TinyFileDialogs
         return (MessageBoxButton)result;
     }
 
-    public static unsafe bool InputBox(
+    public static bool InputBox(
         [NotNullWhen(true)] out string? output,
         string? title = null,
         string? message = null,
@@ -103,20 +104,34 @@ public static class TinyFileDialogs
         bool isPasswordInput = false
     )
     {
+        output = null;
+
+        nint resultPtr;
+
         if (isPasswordInput)
             defaultInput = null;
         else
             defaultInput ??= string.Empty;
 
         if (OperatingSystem.IsWindows())
-            output = tinyfd_inputBoxW(title, message, defaultInput);
+        {
+            resultPtr = tinyfd_inputBoxW(title, message, defaultInput);
+
+            if (resultPtr != 0)
+                output = Marshal.PtrToStringUni(resultPtr);
+        }
         else
-            output = tinyfd_inputBox(title, message, defaultInput);
+        {
+            resultPtr = tinyfd_inputBox(title, message, defaultInput);
+
+            if (resultPtr != 0)
+                output = Marshal.PtrToStringUTF8(resultPtr);
+        }
 
         return output is not null;
     }
 
-    public static unsafe bool SaveFileDialog(
+    public static bool SaveFileDialog(
         [NotNullWhen(true)] out string? output,
         string? title = null,
         string? defaultPath = null,
@@ -124,27 +139,41 @@ public static class TinyFileDialogs
         string? filterDescription = null
     )
     {
+        output = null;
+
+        nint resultPtr;
+
         if (OperatingSystem.IsWindows())
-            output = tinyfd_saveFileDialogW(
+        {
+            resultPtr = tinyfd_saveFileDialogW(
                 title,
                 defaultPath,
                 filterPatterns?.Length ?? 0,
                 filterPatterns,
                 filterDescription
             );
+
+            if (resultPtr != 0)
+                output = Marshal.PtrToStringUni(resultPtr);
+        }
         else
-            output = tinyfd_saveFileDialog(
+        {
+            resultPtr = tinyfd_saveFileDialog(
                 title,
                 defaultPath,
                 filterPatterns?.Length ?? 0,
                 filterPatterns,
                 filterDescription
             );
+
+            if (resultPtr != 0)
+                output = Marshal.PtrToStringUTF8(resultPtr);
+        }
 
         return output is not null;
     }
 
-    public static unsafe bool OpenFileDialog(
+    public static bool OpenFileDialog(
         [NotNullWhen(true)] out string[]? output,
         string? title = null,
         string? defaultPath = null,
@@ -155,10 +184,12 @@ public static class TinyFileDialogs
     {
         output = null;
 
-        string? result;
+        nint resultPtr;
+        string? result = null;
 
         if (OperatingSystem.IsWindows())
-            result = tinyfd_openFileDialogW(
+        {
+            resultPtr = tinyfd_openFileDialogW(
                 title,
                 defaultPath,
                 filterPatterns?.Length ?? 0,
@@ -166,8 +197,13 @@ public static class TinyFileDialogs
                 filterDescription,
                 allowMultipleSelects ? 1 : 0
             );
+
+            if (resultPtr != 0)
+                Marshal.PtrToStringUni(resultPtr);
+        }
         else
-            result = tinyfd_openFileDialog(
+        {
+            resultPtr = tinyfd_openFileDialog(
                 title,
                 defaultPath,
                 filterPatterns?.Length ?? 0,
@@ -175,6 +211,10 @@ public static class TinyFileDialogs
                 filterDescription,
                 allowMultipleSelects ? 1 : 0
             );
+
+            if (resultPtr != 0)
+                Marshal.PtrToStringUTF8(resultPtr);
+        }
 
         if (result is null)
             return false;
@@ -183,34 +223,50 @@ public static class TinyFileDialogs
         return true;
     }
 
-    public static unsafe bool SelectFolderDialog(
+    public static bool SelectFolderDialog(
         [NotNullWhen(true)] out string? output,
         string? title = null,
         string? defaultPath = null
     )
     {
+        output = null;
+
         if (OperatingSystem.IsWindows())
-            output = tinyfd_selectFolderDialogW(title, defaultPath);
+        {
+            nint outputPtr = tinyfd_selectFolderDialogW(title, defaultPath);
+
+            if (outputPtr != nint.Zero)
+                output = Marshal.PtrToStringUni(outputPtr);
+        }
         else
-            output = tinyfd_selectFolderDialog(title, defaultPath);
+        {
+            nint outputPtr = tinyfd_selectFolderDialog(title, defaultPath);
+
+            if (outputPtr != nint.Zero)
+                output = Marshal.PtrToStringUTF8(outputPtr);
+        }
 
         return output is not null;
     }
 
-    public static unsafe bool ColorChooser(out byte[] output, string? title, byte[]? defaultColor)
+    public static bool ColorChooser(
+        out byte[] output,
+        string? title = null,
+        byte[]? defaultColor = null
+    )
     {
         output = new byte[3];
 
-        if (defaultColor?.Length < 3)
+        if (defaultColor is null || defaultColor.Length < 3)
             defaultColor = null;
 
-        string? result;
+        nint resultPtr;
 
         if (OperatingSystem.IsWindows())
-            result = tinyfd_colorChooserW(title, null, defaultColor, output);
+            resultPtr = tinyfd_colorChooserW(title, null, defaultColor, output);
         else
-            result = tinyfd_colorChooser(title, null, defaultColor, output);
+            resultPtr = tinyfd_colorChooser(title, null, defaultColor, output);
 
-        return result is null;
+        return resultPtr != 0;
     }
 }
