@@ -199,7 +199,7 @@ public static class TinyFileDialogs
             );
 
             if (resultPtr != 0)
-                Marshal.PtrToStringUni(resultPtr);
+                result = Marshal.PtrToStringUni(resultPtr);
         }
         else
         {
@@ -213,7 +213,7 @@ public static class TinyFileDialogs
             );
 
             if (resultPtr != 0)
-                Marshal.PtrToStringUTF8(resultPtr);
+                result = Marshal.PtrToStringUTF8(resultPtr);
         }
 
         if (result is null)
