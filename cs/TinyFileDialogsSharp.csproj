@@ -10,7 +10,18 @@
 
   <Target Name="CBuildScript" BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(CBuildPath)" />
-    <Exec Command="cd $(CBuildPath); cmake ..; make" />
+    
+    <Exec Command='
+      cd $(CBuildPath)
+      cmake -G "Unix Makefiles" ..
+      make'
+    />
+
+    <Move
+      Condition="$([MSBuild]::IsOsPlatform(Windows))"
+      SourceFiles="$(CBuildPath)\libtinyfiledialogs.dll"
+      DestinationFiles="$(CBuildPath)\tinyfiledialogs.dll"
+    />
   </Target>
 
  <ItemGroup>
