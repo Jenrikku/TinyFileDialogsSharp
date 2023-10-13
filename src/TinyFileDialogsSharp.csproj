@@ -5,46 +5,53 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CBuildPath>$(MSBuildProjectDirectory)\..\build</CBuildPath>
+    <LibPath>$(MSBuildProjectDirectory)\..\tinyfd\dll_cs_lua_R_fortran_pascal</LibPath>
+    <TempDir>$(MSBuildProjectDirectory)\..\runtimes</TempDir>
   </PropertyGroup>
 
-  <Target Name="CBuildScript" BeforeTargets="BeforeBuild">
-    <MakeDir Directories="$(CBuildPath)" />
-    
-    <Exec Command='
-      cd $(CBuildPath)
-      cmake -G "Unix Makefiles" ..
-      make'
-    />
+  <Target Name="RenameAssemblies" BeforeTargets="BeforeBuild">
+    <Copy
+      SourceFiles="
+        $(LibPath)\tinyfiledialogsLinux64.so;
+        $(LibPath)\tinyfiledialogsLinux86.so;
+        $(LibPath)\tinyfiledialogs64.dll;
+        $(LibPath)\tinyfiledialogs32.dll;
+        $(LibPath)\tinyfiledialogsAppleSilicon.dylib"
 
-    <Move
-      Condition="$([MSBuild]::IsOsPlatform(Windows))"
-      SourceFiles="$(CBuildPath)\libtinyfiledialogs.dll"
-      DestinationFiles="$(CBuildPath)\tinyfiledialogs.dll"
+      DestinationFiles="
+        $(TempDir)\linux-x64\libtinyfiledialogs.so; 
+        $(TempDir)\linux-x86\libtinyfiledialogs.so;
+        $(TempDir)\win-x64\tinyfiledialogs.dll;
+        $(TempDir)\win-x86\tinyfiledialogs.dll;
+        $(TempDir)\osx\libtinyfiledialogs.dylib"
     />
   </Target>
 
  <ItemGroup>
-    <Content 
-      Include="$(CBuildPath)\libtinyfiledialogs.so"
-      Condition="$([MSBuild]::IsOsPlatform(Linux))"
-      BeforeTargets="Build"
-      CopyToOutputDirectory="Always"
-    />
+    <Content Include="$(TempDir)\linux-x64\libtinyfiledialogs.so" BeforeTargets="Build">
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
 
-    <Content
-      Include="$(CBuildPath)\tinyfiledialogs.dll"
-      Condition="$([MSBuild]::IsOsPlatform(Windows))"
-      BeforeTargets="Build"
-      CopyToOutputDirectory="Always"
-    />
+    <Content Include="$(TempDir)\linux-x86\libtinyfiledialogs.so" CopyToOutputDirectory="Always">
+      <PackagePath>runtimes\linux-x86\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
 
-    <Content
-      Include="$(CBuildPath)\libtinyfiledialogs.dylib"
-      Condition="$([MSBuild]::IsOsPlatform(OSX))"
-      BeforeTargets="Build"
-      CopyToOutputDirectory="Always"
-    />
+    <Content Include="$(TempDir)\win-x64\tinyfiledialogs.dll" CopyToOutputDirectory="Always">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="$(TempDir)\win-x86\tinyfiledialogs.dll" CopyToOutputDirectory="Always">
+      <PackagePath>runtimes\win-x86\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="$(TempDir)\osx\libtinyfiledialogs.dylib" CopyToOutputDirectory="Always">
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
  </ItemGroup>
 
 </Project>
