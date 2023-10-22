@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LibPath>$(MSBuildProjectDirectory)\..\tinyfd\dll_cs_lua_R_fortran_pascal</LibPath>
-    <TempDir>$(MSBuildProjectDirectory)\..\runtimes</TempDir>
+    <TempDir>$(MSBuildProjectDirectory)\runtimes</TempDir>
   </PropertyGroup>
 
   <Target Name="RenameAssemblies" BeforeTargets="BeforeBuild">
@@ -19,37 +19,16 @@
         $(LibPath)\tinyfiledialogsAppleSilicon.dylib"
 
       DestinationFiles="
-        $(TempDir)\linux-x64\libtinyfiledialogs.so; 
-        $(TempDir)\linux-x86\libtinyfiledialogs.so;
-        $(TempDir)\win-x64\tinyfiledialogs.dll;
-        $(TempDir)\win-x86\tinyfiledialogs.dll;
-        $(TempDir)\osx\libtinyfiledialogs.dylib"
+        $(TempDir)\linux-x64\native\libtinyfiledialogs.so; 
+        $(TempDir)\linux-x86\native\libtinyfiledialogs.so;
+        $(TempDir)\win-x64\native\tinyfiledialogs.dll;
+        $(TempDir)\win-x86\native\tinyfiledialogs.dll;
+        $(TempDir)\osx\native\libtinyfiledialogs.dylib"
     />
   </Target>
 
  <ItemGroup>
-    <Content Include="$(TempDir)\linux-x64\libtinyfiledialogs.so" BeforeTargets="Build">
-      <PackagePath>runtimes\linux-x64\native</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-
-    <Content Include="$(TempDir)\linux-x86\libtinyfiledialogs.so" CopyToOutputDirectory="Always">
-      <PackagePath>runtimes\linux-x86\native</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-
-    <Content Include="$(TempDir)\win-x64\tinyfiledialogs.dll" CopyToOutputDirectory="Always">
-      <PackagePath>runtimes\win-x64\native</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-
-    <Content Include="$(TempDir)\win-x86\tinyfiledialogs.dll" CopyToOutputDirectory="Always">
-      <PackagePath>runtimes\win-x86\native</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-
-    <Content Include="$(TempDir)\osx\libtinyfiledialogs.dylib" CopyToOutputDirectory="Always">
-      <PackagePath>runtimes\osx\native</PackagePath>
+    <Content Include="$(TempDir)\**" BeforeTargets="Build">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
  </ItemGroup>
