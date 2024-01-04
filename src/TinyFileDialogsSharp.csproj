@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CopyAssemblies">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -9,7 +9,7 @@
     <TempDir>$(MSBuildProjectDirectory)\runtimes</TempDir>
   </PropertyGroup>
 
-  <Target Name="RenameAssemblies" BeforeTargets="BeforeBuild">
+  <Target Name="CopyAssemblies">
     <Copy
       SourceFiles="
         $(LibPath)\tinyfiledialogsLinux64.so;
@@ -28,7 +28,7 @@
   </Target>
 
  <ItemGroup>
-    <Content Include="$(TempDir)\**" BeforeTargets="Build">
+    <Content Include="$(TempDir)\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
  </ItemGroup>
